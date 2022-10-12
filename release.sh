@@ -9,33 +9,18 @@ git pull origin develop
 
 git checkout -b release/$release_tag
 
-git log --oneline $(git describe --tags --abbrev=0 @^)..@ --pretty=format:"%s" >> result.txt
-
-: '
-sed -i "1s/^/  \n/" $file_name
-cat result.txt | while read line
-do
-  echo $line
-  echo "aa"
-  #sed -i "1s/^/  \n/" $file_name
-  #sed -i "1s/^/  * $line/" $file_name
-done
-'
-
 input="result.txt"
-while IFS= read -r line
+git log --oneline $(git describe --tags --abbrev=0 @^)..@ --pretty=format:"%s" >> $input
+sed -i -e '$a\' $input
+
+sed -i "1s/^/  \n/" $file_name
+while read line;
 do
-  echo "$line"
-done < "$input"
-
+  sed -i "1s/^/  \n/" $file_name
+  sed -i "1s/^/  * $line/" $file_name
+done < $input; echo $line
 sed -i "1s/^/Release $release_tag - Date: $(date '+%Y-%m-%d') \n/" $file_name
-
-: '
 rm result.txt
-del result.txt
-
-
-
 
 git add -A
 git commit -m "feat: release $release_tag"
@@ -50,5 +35,3 @@ git push --set-upstream --atomic origin master release/$release_tag
 git checkout develop
 git pull origin master
 git push --set-upstream --atomic origin develop release/$release_tag
-
-'
