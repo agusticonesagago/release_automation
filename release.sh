@@ -35,3 +35,6 @@ git push --set-upstream --atomic origin master release/$release_tag
 git checkout develop
 git pull origin master
 git push --set-upstream --atomic origin develop release/$release_tag
+
+cd ..
+rm -rf $repository_name
